@@ -117,7 +117,7 @@ namespace Floe.UI
 					string selText = this.GetSelectedText();
 					if (selText.Length >= this.MinimumCopyLength)
 					{
-						Clipboard.SetText(selText);
+                        ClipboardHelper.SetText(selText);
 					}
 				}
 

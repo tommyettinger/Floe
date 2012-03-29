@@ -45,7 +45,7 @@ namespace Floe.Configuration
 			var map = new ExeConfigurationFileMap();
 			map.ExeConfigFilename = AppDomain.CurrentDomain.SetupInformation.ConfigurationFile;
 			string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), _appName);
-#if DEBUG
+#if DEBUG1
 			path = Path.Combine(path, string.Format("{0}.DEBUG.config", _appName));
 #else
 			path = Path.Combine(path, string.Format("{0}.config", _appName));
