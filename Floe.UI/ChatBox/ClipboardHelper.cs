@@ -6,7 +6,7 @@ namespace Floe.UI
 
     public static class ClipboardHelper
     {
-        private const int MAX_SET_RETRY_ATTEMPTS = 100;
+        private const int MAX_SET_RETRY_ATTEMPTS = 10;
 
         /// <summary>
         /// Sets the clipboard text.
