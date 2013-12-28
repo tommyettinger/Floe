@@ -16,7 +16,7 @@ namespace Floe.UI
 		public bool CanVerticallyScroll { get { return true; } set { } }
 		public double ExtentHeight { get { return _lineHeight * _bufferLines; } }
 		public double ExtentWidth { get { return this.ActualWidth; } }
-		public ScrollViewer ScrollOwner { get { return _viewer; } set { _viewer = value; } }
+        public ScrollViewer ScrollOwner { get { return _viewer; } set { _viewer = value; _viewer.PanningMode = PanningMode.VerticalOnly; } }
 		public double ViewportHeight { get { return this.ActualHeight; } }
 		public double ViewportWidth { get { return this.ActualWidth; } }
 		public double HorizontalOffset { get { return 0.0; } }
