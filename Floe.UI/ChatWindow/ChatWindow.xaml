@@ -247,7 +247,7 @@
 								<StackPanel IsItemsHost="True" Orientation="Horizontal" Height="25" Background="Transparent"/>
 							</ScrollViewer>
 							</Border>
-							<ContentPresenter ContentSource="SelectedContent" Margin="0"/>
+							<ContentPresenter Name="PART_SelectedContentHost" ContentSource="SelectedContent" Margin="0"/>
 						</DockPanel>
 					</ControlTemplate>
 				</TabControl.Template>
