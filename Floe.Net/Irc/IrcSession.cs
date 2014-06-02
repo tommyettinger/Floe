@@ -878,6 +878,9 @@ namespace Floe.Net
 				case "MODE":
 					this.OnMode(e.Message);
 					break;
+                case "CAP":
+                    this.OnCap(e.Message);
+                    break;
 				default:
 					this.OnOther(e.Message);
 					break;
@@ -1000,6 +1003,31 @@ namespace Floe.Net
 			}
 		}
 
+        // IRCv3 Client Capability Negotiation
+        private void OnCap(IrcMessage message)
+        {
+            if (message.Parameters.Count >= 2)
+            {
+                switch (message.Parameters[1].ToUpper())
+                {
+                    //  RIGHT NOW WE DON'T CARE, we're just supporting one thing and ZNC 1.4 doesn't really
+                    // follow the spec like I thought it would...
+                    // We don't really even need to do anything about "ACK" but we might want to handle "NAK"
+                    // in case ZNC 1.5 or whatever drops znc.in/server-time-iso in favor of server-time...
+                    case "LS":      // Server listed capabilities. END or REQ.
+                        break;
+                    case "ACK":     // Server acknowledged. Turn it on.
+                        break;
+                    case "NAK":     // Server rejected. Turn it off.
+                        break;
+                    case "LIST":    // Server listed. Make sure we match?
+                        break;
+                    default:        // Who cares?
+                        break;
+                }
+            }
+        }
+
 		private void OnOther(IrcMessage message)
 		{
 			int code;
@@ -1064,6 +1092,11 @@ namespace Floe.Net
 			this.InternalAddress = this.ExternalAddress =
 				Dns.GetHostEntry(string.Empty).AddressList
 				.Where((ip) => ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork).FirstOrDefault();
+
+            // IRCv3 Client Capability Negotiation
+            //_conn.QueueMessage(new IrcMessage("CAP", "LS"));
+            // NEGOTIATION? I MEANT A ONE-SIDED DEMAND.
+            _conn.QueueMessage(new IrcMessage("CAP", "REQ", "znc.in/server-time-iso"));
 
 			if (!string.IsNullOrEmpty(_password))
 			{

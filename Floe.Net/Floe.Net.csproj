@@ -97,6 +97,7 @@
     <Compile Include="Irc\IrcModes.cs" />
     <Compile Include="Irc\IrcPrefix.cs" />
     <Compile Include="Irc\IrcSession.cs" />
+    <Compile Include="Irc\IrcTags.cs" />
     <Compile Include="Irc\IrcTarget.cs" />
     <Compile Include="Network\NatHelper.cs" />
     <Compile Include="Network\ProxyInfo.cs" />

@@ -1,4 +1,8 @@
 Floe
 ====
 
-My own fork of [Floe](http://floe.codeplex.com/). I pulled in bug fixes and UI improvements from other forks, next I'll make it ZNC-aware.
+My own fork of [Floe](http://floe.codeplex.com/).
+
+CHANGES:
+* Bug fixes, enhancements, and UI improvements from other forks.
+* Support for ZNC 1.4 server-time.

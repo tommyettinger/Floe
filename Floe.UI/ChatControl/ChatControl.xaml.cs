@@ -170,9 +170,9 @@ namespace Floe.UI
 			this.Execute(text, (Keyboard.Modifiers & ModifierKeys.Shift) > 0);
 		}
 
-		private void Write(string styleKey, int nickHashCode, string nick, string text, bool attn)
+		private void Write(string styleKey, DateTime date, int nickHashCode, string nick, string text, bool attn)
 		{
-			var cl = new ChatLine(styleKey, nickHashCode, nick, text, ChatMarker.None);
+			var cl = new ChatLine(styleKey, date, nickHashCode, nick, text, ChatMarker.None);
 
 			if (_hasDeactivated)
 			{
@@ -216,9 +216,14 @@ namespace Floe.UI
 			}
 		}
 
-		private void Write(string styleKey, IrcPeer peer, string text, bool attn)
+        private void Write(string styleKey, int nickHashCode, string nick, string text, bool attn)
+        {
+            Write(styleKey, DateTime.Now, nickHashCode, nick, text, attn);
+        }
+
+        private void Write(string styleKey, DateTime date, IrcPeer peer, string text, bool attn)
 		{
-			this.Write(styleKey, string.Format("{0}@{1}", peer.Username, peer.Hostname).GetHashCode(),
+			this.Write(styleKey, date, string.Format("{0}@{1}", peer.Username, peer.Hostname).GetHashCode(),
 				this.GetNickWithLevel(peer.Nickname), text, attn);
 			if (!boxOutput.IsAutoScrolling)
 			{
@@ -226,10 +231,20 @@ namespace Floe.UI
 			}
 		}
 
-		private void Write(string styleKey, string text)
+        private void Write(string styleKey, IrcPeer peer, string text, bool attn)
+        {
+            this.Write(styleKey, DateTime.Now, peer, text, attn);
+        }
+
+        private void Write(string styleKey, DateTime date, string text)
 		{
-			this.Write(styleKey, 0, null, text, false);
+			this.Write(styleKey, date, 0, null, text, false);
 		}
+
+        private void Write(string styleKey, string text)
+        {
+            this.Write(styleKey, DateTime.Now, 0, null, text, false);
+        }
 
 		private void SetInputText(string text)
 		{

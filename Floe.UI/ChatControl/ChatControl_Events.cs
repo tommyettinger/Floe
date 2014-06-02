@@ -66,11 +66,11 @@ namespace Floe.UI
 			{
 				if (e.From is IrcPeer)
 				{
-					this.Write("Notice", (IrcPeer)e.From, e.Text, false);
+					this.Write("Notice", e.Message.Time, (IrcPeer)e.From, e.Text, false);
 				}
 				else if (this.IsServer)
 				{
-					this.Write("Notice", e.Text);
+					this.Write("Notice", e.Message.Time, e.Text);
 				}
 				App.DoEvent("notice");
 			}
@@ -111,7 +111,7 @@ namespace Floe.UI
 						}
 					}
 
-					this.Write("Default", e.From, e.Text, attn);
+                    this.Write("Default", e.Message.Time, e.From, e.Text, attn);
 					if (!this.Target.IsChannel)
 					{
 						if (e.From.Prefix != _prefix)
@@ -133,7 +133,7 @@ namespace Floe.UI
 		{
 			if (!this.IsServer && this.Target.Equals(e.Channel))
 			{
-				this.Write("Kick",
+                this.Write("Kick", e.Message.Time,
 					e.Kicker == null ? string.Format("{0} has been kicked ({1}", e.KickeeNickname, e.Text) :
 					string.Format("{0} has been kicked by {1} ({2})", e.KickeeNickname, e.Kicker.Nickname, e.Text));
 				_nickList.Remove(e.KickeeNickname);
@@ -144,7 +144,7 @@ namespace Floe.UI
 		{
 			if (this.IsServer)
 			{
-				this.Write("Kick", string.Format("You have been kicked from {0} by {1} ({2})",
+                this.Write("Kick", e.Message.Time, string.Format("You have been kicked from {0} by {1} ({2})",
 					e.Channel, e.Kicker.Nickname, e.Text));
 			}
 		}
@@ -173,14 +173,14 @@ namespace Floe.UI
 					{
 						_topic = e.Message.Parameters[2];
 						this.SetTitle();
-						this.Write("Topic", string.Format("Topic is: {0}", _topic));
+                        this.Write("Topic", e.Message.Time, string.Format("Topic is: {0}", _topic));
 					}
 					return;
 				case IrcCode.RPL_TOPICSETBY:
 					if (e.Message.Parameters.Count == 4 && !this.IsServer &&
 						this.Target.Equals(new IrcTarget(e.Message.Parameters[1])))
 					{
-						this.Write("Topic", string.Format("Topic set by {0} on {1}", e.Message.Parameters[2],
+                        this.Write("Topic", e.Message.Time, string.Format("Topic set by {0} on {1}", e.Message.Parameters[2],
 							this.FormatTime(e.Message.Parameters[3])));
 					}
 					return;
@@ -195,7 +195,7 @@ namespace Floe.UI
 				case IrcCode.RPL_WHOWASUSER:
 					if (e.Message.Parameters.Count == 6 && this.IsDefault)
 					{
-						this.Write("ServerInfo",
+                        this.Write("ServerInfo", e.Message.Time,
 							string.Format("{1} " + (e.Code == IrcCode.RPL_WHOWASUSER ? "was" : "is") + " {2}@{3} {4} {5}",
 							(object[])e.Message.Parameters));
 						return;
@@ -204,7 +204,7 @@ namespace Floe.UI
 				case IrcCode.RPL_WHOISCHANNELS:
 					if (e.Message.Parameters.Count == 3 && this.IsDefault)
 					{
-						this.Write("ServerInfo", string.Format("{1} is on {2}",
+                        this.Write("ServerInfo", e.Message.Time, string.Format("{1} is on {2}",
 							(object[])e.Message.Parameters));
 						return;
 					}
@@ -212,7 +212,7 @@ namespace Floe.UI
 				case IrcCode.RPL_WHOISSERVER:
 					if (e.Message.Parameters.Count == 4 && this.IsDefault)
 					{
-						this.Write("ServerInfo", string.Format("{1} using {2} {3}",
+                        this.Write("ServerInfo", e.Message.Time, string.Format("{1} using {2} {3}",
 							(object[])e.Message.Parameters));
 						return;
 					}
@@ -220,7 +220,7 @@ namespace Floe.UI
 				case IrcCode.RPL_WHOISIDLE:
 					if (e.Message.Parameters.Count == 5 && this.IsDefault)
 					{
-						this.Write("ServerInfo", string.Format("{0} has been idle {1}, signed on {2}",
+                        this.Write("ServerInfo", e.Message.Time, string.Format("{0} has been idle {1}, signed on {2}",
 							e.Message.Parameters[1], this.FormatTimeSpan(e.Message.Parameters[2]),
 							this.FormatTime(e.Message.Parameters[3])));
 						return;
@@ -229,7 +229,7 @@ namespace Floe.UI
 				case IrcCode.RPL_INVITING:
 					if (e.Message.Parameters.Count == 3 && this.IsDefault)
 					{
-						this.Write("ServerInfo", string.Format("Invited {0} to channel {1}",
+                        this.Write("ServerInfo", e.Message.Time, string.Format("Invited {0} to channel {1}",
 							e.Message.Parameters[1], e.Message.Parameters[2]));
 						return;
 					}
@@ -243,7 +243,7 @@ namespace Floe.UI
 
 			if (!e.Handled && ((int)e.Code < 200 && this.IsServer || this.IsDefault))
 			{
-				this.Write("ServerInfo", e.Text);
+                this.Write("ServerInfo", e.Message.Time, e.Text);
 			}
 		}
 
@@ -296,11 +296,11 @@ namespace Floe.UI
 					}
 				}
 
-				this.Write("Action", string.Format("{0} {1}", e.From.Nickname, text, attn));
+                this.Write("Action", e.Message.Time, string.Format("{0} {1}", e.From.Nickname, text, attn));
 			}
 			else if (this.IsServer && e.Command.Command != "ACTION" && e.From != null)
 			{
-				this.Write("Ctcp", e.From, string.Format("[CTCP {1}] {2}",
+                this.Write("Ctcp", e.Message.Time, e.From, string.Format("[CTCP {1}] {2}",
 					e.From.Nickname, e.Command.Command,
 					e.Command.Arguments.Length > 0 ? string.Join(" ", e.Command.Arguments) : ""), false);
 			}
@@ -314,7 +314,7 @@ namespace Floe.UI
 			{
 				if (!isIgnored)
 				{
-					this.Write("Join", string.Format("{0} ({1}@{2}) has joined channel {3}",
+                    this.Write("Join", e.Message.Time, string.Format("{0} ({1}@{2}) has joined channel {3}",
 						e.Who.Nickname, e.Who.Username, e.Who.Hostname, this.Target.ToString()));
 				}
 				_nickList.Add(e.Who.Nickname);
@@ -329,7 +329,7 @@ namespace Floe.UI
 			{
 				if (!isIgnored)
 				{
-					this.Write("Part", string.Format("{0} ({1}@{2}) has left channel {3}",
+                    this.Write("Part", e.Message.Time, string.Format("{0} ({1}@{2}) has left channel {3}",
 						e.Who.Nickname, e.Who.Username, e.Who.Hostname, this.Target.ToString()));
 				}
 				_nickList.Remove(e.Who.Nickname);
@@ -344,7 +344,7 @@ namespace Floe.UI
 			{
 				if (!isIgnored)
 				{
-					this.Write("Nick", string.Format("{0} is now known as {1}", e.OldNickname, e.NewNickname));
+                    this.Write("Nick", e.Message.Time, string.Format("{0} is now known as {1}", e.OldNickname, e.NewNickname));
 				}
 				_nickList.ChangeNick(e.OldNickname, e.NewNickname);
 			}
@@ -354,7 +354,7 @@ namespace Floe.UI
 		{
 			if (this.IsServer || this.IsChannel)
 			{
-				this.Write("Nick", string.Format("You are now known as {0}", e.NewNickname));
+                this.Write("Nick", e.Message.Time, string.Format("You are now known as {0}", e.NewNickname));
 			}
 			this.SetTitle();
 
@@ -368,7 +368,7 @@ namespace Floe.UI
 		{
 			if (!this.IsServer && this.Target.Equals(e.Channel))
 			{
-				this.Write("Topic", string.Format("{0} changed topic to: {1}", e.Who.Nickname, e.Text));
+                this.Write("Topic", e.Message.Time, string.Format("{0} changed topic to: {1}", e.Who.Nickname, e.Text));
 				_topic = e.Text;
 				this.SetTitle();
 			}
@@ -378,7 +378,7 @@ namespace Floe.UI
 		{
 			if (this.IsServer)
 			{
-				this.Write("Mode", string.Format("You set mode: {0}", IrcUserMode.RenderModes(e.Modes)));
+                this.Write("Mode", e.Message.Time, string.Format("You set mode: {0}", IrcUserMode.RenderModes(e.Modes)));
 			}
 			this.SetTitle();
 		}
@@ -391,7 +391,7 @@ namespace Floe.UI
 			{
 				if (!isIgnored)
 				{
-					this.Write("Quit", string.Format("{0} has quit ({1})", e.Who.Nickname, e.Text));
+                    this.Write("Quit", e.Message.Time, string.Format("{0} has quit ({1})", e.Who.Nickname, e.Text));
 				}
 				_nickList.Remove(e.Who.Nickname);
 			}
@@ -403,7 +403,7 @@ namespace Floe.UI
 			{
 				if (e.Who != null)
 				{
-					this.Write("Mode", string.Format("{0} set mode: {1}", e.Who.Nickname,
+                    this.Write("Mode", e.Message.Time, string.Format("{0} set mode: {1}", e.Who.Nickname,
 						string.Join(" ", IrcChannelMode.RenderModes(e.Modes))));
 
 					_channelModes = (from m in e.Modes.Where((newMode) => newMode.Parameter == null && newMode.Set).
@@ -434,7 +434,7 @@ namespace Floe.UI
 
 			if (this.IsDefault || this.IsServer)
 			{
-				this.Write("Invite", string.Format("{0} invited you to channel {1}", e.From.Nickname, e.Channel));
+                this.Write("Invite", e.Message.Time, string.Format("{0} invited you to channel {1}", e.From.Nickname, e.Channel));
 			}
 		}
 

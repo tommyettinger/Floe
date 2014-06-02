@@ -24,16 +24,40 @@ namespace Floe.Net
 		/// </summary>
 		public IList<string> Parameters { get; private set; }
 
+        /// <summary>
+        /// Gets the list of tags.
+        /// </summary>
+        public IrcTags Tags { get; private set; }
+
+        public DateTime Received { get; private set; }
+
+        public DateTime Time
+        {
+            get
+            {
+                if (Tags.ContainsKey("time"))
+                {
+                    DateTime t;
+                    if (DateTime.TryParse(Tags["time"], System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.AssumeUniversal, out t))
+                        return t.ToLocalTime();
+                }
+
+                return Received;
+            }
+        }
+
 		internal IrcMessage(string command, params string[] parameters)
-			: this(null, command, parameters)
+			: this(new IrcTags(), null, command, parameters)
 		{
 		}
 
-		internal IrcMessage(IrcPrefix prefix, string command, params string[] parameters)
+		internal IrcMessage(IrcTags tags, IrcPrefix prefix, string command, params string[] parameters)
 		{
+            this.Tags = tags;
 			this.From = prefix;
             this.Command = command;
 			this.Parameters = parameters;
+            this.Received = DateTime.Now;
 		}
 
 		/// <summary>
@@ -66,15 +90,31 @@ namespace Floe.Net
 		{
 			StringBuilder sb = new StringBuilder();
 			List<string> para = new List<string>();
-			int size = data.Length > 512 ? 512 : data.Length;
-			Char[] c = data.ToCharArray(0, size);
+			//int size = data.Length > 512 ? 512 : data.Length;
+			//Char[] c = data.ToCharArray(0, size);
+            Char[] c = data.ToCharArray();
 			int pos = 0;
+            string tagstring = null;
 			string prefix = null;
 			string command = null;
 
-			if (c[0] == ':')
+            if (c[pos] == '@')
+            {
+                for (pos++; pos < c.Length; pos++)
+                {
+                    if (c[pos] == ' ')
+                        break;
+
+                    sb.Append(c[pos]);
+                }
+                tagstring = sb.ToString();
+                sb.Length = 0;
+                pos++;
+            }
+
+			if (c[pos] == ':')
 			{
-				for (pos = 1; pos < c.Length; pos++)
+				for (pos++; pos < c.Length; pos++)
 				{
 					if (c[pos] == ' ')
 						break;
@@ -116,7 +156,7 @@ namespace Floe.Net
 				pos++;
 			}
 
-			return new IrcMessage(IrcPrefix.Parse(prefix), command, para.ToArray());
+			return new IrcMessage(IrcTags.Parse(tagstring), IrcPrefix.Parse(prefix), command, para.ToArray());
 		}
 	}
 }

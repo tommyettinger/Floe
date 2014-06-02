@@ -29,10 +29,10 @@ namespace Floe.UI
 			this.Process(text);
 		}
 
-		public ChatLine(string colorKey, int nickHashCode, string nick, string text, ChatMarker decoration)
-			: this(colorKey, DateTime.Now, nickHashCode, nick, text, decoration)
-		{
-		}
+        //public ChatLine(string colorKey, int nickHashCode, string nick, string text, ChatMarker decoration)
+        //    : this(colorKey, DateTime.Now, nickHashCode, nick, text, decoration)
+        //{
+        //}
 
 		public ChatSpan GetSpan(int idx)
 		{
