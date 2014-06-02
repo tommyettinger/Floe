@@ -198,7 +198,7 @@
                     <ControlTemplate TargetType="{x:Type Thumb}">
                         <Grid x:Name="Grid">
                             <Rectangle HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Height="Auto" Fill="Transparent" />
-                            <Border x:Name="Rectangle1" CornerRadius="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Height="Auto"  Background="{TemplateBinding Background}" />
+                            <Border x:Name="Rectangle1" CornerRadius="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Height="Auto" Margin="0,4,0,4" Background="{TemplateBinding Background}" />
                         </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="Tag" Value="Horizontal">
