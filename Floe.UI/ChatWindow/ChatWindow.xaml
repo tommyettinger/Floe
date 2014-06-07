@@ -40,7 +40,7 @@
 		<Geometry x:Key="maximizeButtonGeometry">M0,0 L8,0 L8,8 L0,8 L0,0 M0,1 L8,1</Geometry>
 		<Geometry x:Key="settingsButtonGeometry">M3,4 L6,8 L10,0</Geometry>
         <Geometry x:Key="channelButtonGeometry">M25,120 L55,0 M60,120 L90,0 M20,40 H110 M15,75 H100</Geometry>
-        <Geometry x:Key="searchButtonGeometry">M0,3 A3,3 180 0 1 6,3 A3,3 180 0 1 0,3 M5,5 L8,8</Geometry>
+        <Geometry x:Key="searchButtonGeometry">M0,0 A3,3 180 0 1 5,5 A3,3 180 0 1 0,0 M5,5 L8,8</Geometry>
 		<Geometry x:Key="leftArrowGeometry">M0,4 L8,8 8,0Z</Geometry>
 		<Geometry x:Key="rightArrowGeometry">M0,0 L8,4 L0,8Z</Geometry>
 		<Geometry x:Key="downArrowGeometry">M0,0 L8,0 M0,2 L4,8 L8,2</Geometry>
