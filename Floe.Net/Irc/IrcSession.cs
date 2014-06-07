@@ -256,6 +256,7 @@ namespace Floe.Net
 		/// <summary>
 		/// Opens the IRC session and attempts to connect to a server.
 		/// </summary>
+		/// <param name="sessionName">The session nickname in settings.</param>
 		/// <param name="server">The hostname or IP representation of a server.</param>
 		/// <param name="port">The IRC port.</param>
 		/// <param name="isSecure">True to use an encrypted (SSL) connection, false to use plain text.</param>
@@ -266,7 +267,7 @@ namespace Floe.Net
 		/// <param name="password">The optional password to supply while logging in.</param>
 		/// <param name="invisible">Determines whether the +i flag will be set by default.</param>
 		/// <param name="findExternalAddress">Determines whether to find the external IP address by querying the IRC server upon connect.</param>
-		public void Open(string server, int port, bool isSecure, string nickname,
+		public void Open(string sessionName, string server, int port, bool isSecure, string nickname,
 			string userName, string fullname, bool autoReconnect, string password = null, bool invisible = false, bool findExternalAddress = true,
 			ProxyInfo proxy = null)
 		{
@@ -283,7 +284,15 @@ namespace Floe.Net
 			this.IsSecure = isSecure;
 			this.Username = userName;
 			this.FullName = fullname;
-			this.NetworkName = this.Server;
+			if (sessionName != null)
+			{
+				this.NetworkName = sessionName;
+			}
+			else
+			{
+				this.NetworkName = this.Server;
+			}
+
 			this.UserModes = new char[0];
 			this.AutoReconnect = autoReconnect;
 			this.Proxy = proxy;
@@ -1036,7 +1045,7 @@ namespace Floe.Net
 				var e = new IrcInfoEventArgs(message);
 				if (e.Code == IrcCode.RPL_WELCOME)
 				{
-					if (e.Text.StartsWith("Welcome to the "))
+					if (e.Text.StartsWith("Welcome to the ") && this.NetworkName == this.Server)
 					{
 						var parts = e.Text.Split(' ');
 						this.NetworkName = parts[3];

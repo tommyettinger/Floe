@@ -523,7 +523,7 @@ namespace Floe.UI
 							this.Session.Quit("Changing servers");
 						}
 						this.Perform = "";
-						this.Connect(args[0], port, useSsl, false, password);
+						this.Connect(null, args[0], port, useSsl, false, password);
 					}
 					break;
 				case "ME":
