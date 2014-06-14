@@ -26,7 +26,7 @@ namespace Floe.Net
 			return this.Prefix;
 		}
 
-		internal static IrcPrefix Parse(string prefix)
+		public static IrcPrefix Parse(string prefix)
 		{
 			if (string.IsNullOrEmpty(prefix))
 			{
@@ -67,7 +67,7 @@ namespace Floe.Net
 		/// </summary>
 		public string Hostname { get; private set; }
 
-		internal IrcPeer(string nickUserHost)
+		public IrcPeer(string nickUserHost)
 			: base(nickUserHost)
 		{
 			string[] parts = nickUserHost.Split('@');
@@ -80,7 +80,7 @@ namespace Floe.Net
 			if(parts.Length > 0)
 			{
 				parts = parts[0].Split('!');
-				if (parts.Length > 0)
+				if (parts.Length > 1)
 				{
 					this.Username = parts[1];
 				}
@@ -102,7 +102,7 @@ namespace Floe.Net
 		/// </summary>
 		public string ServerName { get { return this.Prefix; } }
 
-		internal IrcServer(string serverName)
+		public IrcServer(string serverName)
 			: base(serverName)
 		{
 		}

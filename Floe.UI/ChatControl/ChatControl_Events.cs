@@ -111,18 +111,62 @@ namespace Floe.UI
 						}
 					}
 
-                    this.Write("Default", e.Message.Time, e.From, e.Text, attn);
-					if (!this.Target.IsChannel)
+					if (e.From.Prefix.Equals("*buffextras!buffextras@znc.in"))
 					{
-						if (e.From.Prefix != _prefix)
+						int space = e.Text.IndexOf(' ');
+						String subject = e.Text.Substring(0, space);
+						String text = e.Text.Substring(space + 1);
+
+						IrcPeer peer = new IrcPeer(subject);
+						String styleKey = "Default";
+
+						// TODO: Rewrite text if it doesn't match how Floe writes it.
+						if (text.StartsWith("set mode")) // sNickMask + " set mode: " + sModes + " " + sArgs
 						{
-							_prefix = e.From.Prefix;
-							this.SetTitle();
+							styleKey = "Mode";
 						}
-						Interop.WindowHelper.FlashWindow(_window);
-						if (this.VisualParent == null)
+						else if (text.StartsWith("kicked")) // OpNick.GetNickMask() + " kicked " + sKickedNick + " Reason: [" + sMessage + "]"
 						{
-							App.DoEvent("privateMessage");
+							styleKey = "Kick";
+						}
+						else if (text.StartsWith("quit")) // Nick.GetNickMask() + " quit with message: [" + sMessage + "]"
+						{
+							styleKey = "Quit";
+						}
+						else if (text.StartsWith("joined")) // Nick.GetNickMask() + " joined"
+						{
+							styleKey = "Join";
+						}
+						else if (text.StartsWith("parted")) // Nick.GetNickMask() + " parted with message: [" + sMessage + "]"
+						{
+							styleKey = "Part";
+						}
+						else if (text.StartsWith("is now known as")) // OldNick.GetNickMask() + " is now known as " + sNewNick
+						{
+							styleKey = "Nick";
+						}
+						else if (text.StartsWith("changed the topic")) // Nick.GetNickMask() + " changed the topic to: " + sTopic
+						{
+							styleKey = "Topic";
+						}
+						this.Write(styleKey, e.Message.Time, string.Format("{0} {1}", peer.Nickname, text));
+					}
+					else
+					{
+						this.Write("Default", e.Message.Time, e.From, e.Text, attn);
+
+						if (!this.Target.IsChannel)
+						{
+							if (e.From.Prefix != _prefix)
+							{
+								_prefix = e.From.Prefix;
+								this.SetTitle();
+							}
+							Interop.WindowHelper.FlashWindow(_window);
+							if (this.VisualParent == null)
+							{
+								App.DoEvent("privateMessage");
+							}
 						}
 					}
 				}
