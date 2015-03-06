@@ -12,7 +12,7 @@ namespace Floe.UI
         private char[] _channelModes = new char[0];
         private string _topic = "", _prefix;
         private bool _hasDeactivated = false, _usingAlternateNick = false;
-        private int tabCount = 0;
+        private Tuple<int, string> tabData = Tuple.Create(0, "");
         private Window _window;
 
         private void Session_StateChanged(object sender, EventArgs e)
@@ -766,7 +766,7 @@ namespace Floe.UI
                         if (this.IsChannel || this.IsNickname)
                         {
                             tabHit = true;
-                            tabCount = DoNickCompletion(tabCount);
+                            tabData = DoNickCompletion(tabData);
                         }
                         break;
                     default:
@@ -777,7 +777,7 @@ namespace Floe.UI
 
                 if (tabHit != true)
                 {
-                    tabCount = 0;
+                    tabData = Tuple.Create(0, "");
                 }
             }
             else if (e.Key >= Key.A && e.Key <= Key.Z)
