@@ -71,6 +71,8 @@ namespace Floe.UI
                     }
                 }
 
+                // If nextNick perfectly matches an existing nick and there's other nickCandidates, use the next candidate
+                // instead of this one.
                 for (int i = 0; i < _nickCandidates.Length; i++)
                 {
                     if (string.Compare(_nickCandidates[i], nickPart, StringComparison.InvariantCulture) == 0)
