@@ -27,7 +27,7 @@ namespace Floe.UI
             return (nick.Length > 1 && (nick[0] == '@' || nick[0] == '+' || nick[0] == '%')) ? nick.Substring(1) : nick;
         }
 
-        private void DoNickCompletion()
+        private int DoNickCompletion(int tabCount)
         {
             int start = 0, end = 0;
             if (txtInput.Text.Length > 0)
@@ -98,6 +98,7 @@ namespace Floe.UI
                 }
                 _nickCandidates = keepNickCandidates;
             }
+            return tabCount + 1;
         }
     }
 }

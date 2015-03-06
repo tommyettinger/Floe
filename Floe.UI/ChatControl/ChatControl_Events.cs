@@ -12,6 +12,7 @@ namespace Floe.UI
         private char[] _channelModes = new char[0];
         private string _topic = "", _prefix;
         private bool _hasDeactivated = false, _usingAlternateNick = false;
+        private int tabCount = 0;
         private Window _window;
 
         private void Session_StateChanged(object sender, EventArgs e)
@@ -705,6 +706,7 @@ namespace Floe.UI
                 !(FocusManager.GetFocusedElement(this) is ListBoxItem))
             {
                 e.Handled = true;
+                bool tabHit = false;
 
                 switch (e.Key)
                 {
@@ -763,13 +765,19 @@ namespace Floe.UI
                     case Key.Tab:
                         if (this.IsChannel || this.IsNickname)
                         {
-                            DoNickCompletion();
+                            tabHit = true;
+                            tabCount = DoNickCompletion(tabCount);
                         }
                         break;
                     default:
                         Keyboard.Focus(txtInput);
                         e.Handled = false;
                         break;
+                }
+
+                if (tabHit != true)
+                {
+                    tabCount = 0;
                 }
             }
             else if (e.Key >= Key.A && e.Key <= Key.Z)
