@@ -158,7 +158,18 @@ namespace Floe.UI
                 }
                 _nickCandidates = keepNickCandidates;
             }
-            return Tuple.Create(tabCount + 1, completionString);
+            checked
+            {
+                try
+                {
+                    tabCount++;
+                }
+                catch (OverflowException)
+                {
+                    tabCount = 1;
+                }
+            }
+            return Tuple.Create(tabCount, completionString);
         }
     }
 }
