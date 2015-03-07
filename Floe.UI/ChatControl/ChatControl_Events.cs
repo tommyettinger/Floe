@@ -598,15 +598,63 @@ namespace Floe.UI
                 Separator separatorMenuItem2 = new Separator();
                 txtInput.ContextMenu.Items.Insert(cmdIndex, separatorMenuItem2);
                 cmdIndex++;
-                MenuItem cutMi = new MenuItem();
-                cutMi.Header = "Cut";
-                cutMi.Command = ApplicationCommands.Cut;
-                cutMi.CommandTarget = txtInput;
-                txtInput.ContextMenu.Items.Insert(cmdIndex, cutMi);
-                cmdIndex++;
-
             }
+            MenuItem cutMi = new MenuItem();
+            cutMi.Header = "Cut";
+            cutMi.Command = ApplicationCommands.Cut;
+            cutMi.CommandTarget = txtInput;
+            txtInput.ContextMenu.Items.Insert(cmdIndex, cutMi);
+            cmdIndex++;
+            MenuItem copyMi = new MenuItem();
+            copyMi.Header = "Copy";
+            copyMi.Command = ApplicationCommands.Copy;
+            copyMi.CommandTarget = txtInput;
+            txtInput.ContextMenu.Items.Insert(cmdIndex, copyMi);
+            cmdIndex++;
+            MenuItem pasteMi = new MenuItem();
+            pasteMi.Header = "Paste";
+            pasteMi.Command = ApplicationCommands.Paste;
+            pasteMi.CommandTarget = txtInput;
+            txtInput.ContextMenu.Items.Insert(cmdIndex, pasteMi);
+            cmdIndex++;
+            Separator separatorMenuItem3 = new Separator();
+            txtInput.ContextMenu.Items.Insert(cmdIndex, separatorMenuItem3);
+            cmdIndex++;
+
+            MenuItem boldMi = new MenuItem();
+            boldMi.Header = "Bold";
+            boldMi.Command = ChatControl.InsertCommand;
+            boldMi.CommandParameter = new string((char)0x2502, 1);
+            boldMi.InputGestureText = "Ctrl+B";
+            boldMi.CommandTarget = txtInput;
+            txtInput.ContextMenu.Items.Insert(cmdIndex, boldMi);
+            cmdIndex++;
+            MenuItem underlineMi = new MenuItem();
+            underlineMi.Header = "Underline";
+            underlineMi.Command = ChatControl.InsertCommand;
+            underlineMi.CommandParameter = new string((char)0x251F, 1);
+            underlineMi.InputGestureText = "Ctrl+U";
+            underlineMi.CommandTarget = txtInput;
+            txtInput.ContextMenu.Items.Insert(cmdIndex, underlineMi);
+            cmdIndex++;
+            MenuItem reverseMi = new MenuItem();
+            reverseMi.Header = "Reverse";
+            reverseMi.Command = ChatControl.InsertCommand;
+            reverseMi.CommandParameter = new string((char)0x2516, 1);
+            reverseMi.InputGestureText = "Ctrl+R";
+            reverseMi.CommandTarget = txtInput;
+            txtInput.ContextMenu.Items.Insert(cmdIndex, reverseMi);
+            cmdIndex++;
+            MenuItem clearMi = new MenuItem();
+            clearMi.Header = "Clear Formatting";
+            clearMi.Command = ChatControl.InsertCommand;
+            clearMi.CommandParameter = new string((char)0x250F, 1);
+            clearMi.InputGestureText = "Ctrl+O";
+            clearMi.CommandTarget = txtInput;
+            txtInput.ContextMenu.Items.Insert(cmdIndex, clearMi);
+            cmdIndex++;
         }
+
         private void lstNicknames_MouseDoubleClick(object sender, RoutedEventArgs e)
         {
             var listItem = e.Source as ListBoxItem;
