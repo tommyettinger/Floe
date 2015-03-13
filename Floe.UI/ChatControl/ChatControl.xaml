@@ -213,7 +213,7 @@
 		</Border>
 		<Border DockPanel.Dock="Bottom" BorderBrush="{Binding Source={x:Static local:App.Settings}, Path=Current.Colors.WindowForeground, Mode=OneWay}"
 				BorderThickness="0,1,0,1" SnapsToDevicePixels="True">
-			<TextBox Name="txtInput" SnapsToDevicePixels="True" KeyDown="txtInput_KeyDown" SelectionChanged="txtInput_SelectionChanged"
+			<TextBox Name="txtInput" SnapsToDevicePixels="True" KeyDown="txtInput_KeyDown"
 				 Foreground="{Binding Source={x:Static local:App.Settings}, Path=Current.Colors.Edit, Mode=OneWay}"
 				 FontFamily="{Binding Source={x:Static local:App.Settings}, Path=Current.Formatting.FontFamily, Mode=OneWay}"
 				 FontSize="{Binding Source={x:Static local:App.Settings}, Path=Current.Formatting.FontSize, Mode=OneWay}"

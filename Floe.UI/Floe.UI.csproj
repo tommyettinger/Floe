@@ -133,6 +133,7 @@
     <Compile Include="ChatControl\ChatControl_Events.cs" />
     <Compile Include="ChatControl\ChatControl_NickList.cs" />
     <Compile Include="ChatControl\ChatControl_Slap.cs" />
+    <Compile Include="ChatControl\NicknameComplete.cs" />
     <Compile Include="ChatControl\NicknameItem.cs" />
     <Compile Include="ChatControl\NicknameList.cs" />
     <Compile Include="ChatControl\NotifyState.cs" />

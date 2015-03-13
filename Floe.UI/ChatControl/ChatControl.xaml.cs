@@ -250,7 +250,6 @@ namespace Floe.UI
 		{
 			txtInput.Text = text;
 			txtInput.SelectionStart = text.Length;
-			_nickCandidates = null;
 		}
 
 		private void SetTitle()
