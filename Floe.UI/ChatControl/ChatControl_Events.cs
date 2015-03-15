@@ -778,11 +778,6 @@ namespace Floe.UI
             }
         }
 
-        private void txtInput_SelectionChanged(object sender, RoutedEventArgs e)
-        {
-            _nickCandidates = null;
-        }
-
         protected override void OnPreviewMouseRightButtonDown(MouseButtonEventArgs e)
         {
             this.SelectedLink = null;
@@ -862,7 +857,7 @@ namespace Floe.UI
                         if (this.IsChannel || this.IsNickname)
                         {
                             tabHit = true;
-                            tabData = DoNickCompletion(tabData);
+                            DoNickCompletion();
                         }
                         break;
                     default:
@@ -873,7 +868,7 @@ namespace Floe.UI
 
                 if (tabHit != true)
                 {
-                    tabData = Tuple.Create(0, "");
+                    _nicknameComplete = null;
                 }
             }
             else if (e.Key >= Key.A && e.Key <= Key.Z)
