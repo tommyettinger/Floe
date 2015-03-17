@@ -8,6 +8,7 @@ namespace Floe.Net
 	/// </summary>
 	public enum IrcCode
 	{
+		None = 0,
 		RPL_WELCOME = 001,
 		RPL_YOURHOST = 002,
 		RPL_CREATED = 003,

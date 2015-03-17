@@ -327,12 +327,10 @@ namespace Floe.Net
 		internal IrcInfoEventArgs(IrcMessage message)
 			: base(message)
 		{
-			int code;
-			if (int.TryParse(message.Command, out code))
-			{
-				this.Code = (IrcCode)code;
-			}
-
+			// This should only be called on the reply/error path.
+			if (message.Code == IrcCode.None)
+				throw new ArgumentException("message is not a reply");
+			this.Code = message.Code;
 			this.Text = message.Parameters.Count > 1 ? string.Join(" ", message.Parameters.Skip(1).ToArray()) : null;
 			this.IsError = (int)this.Code >= 400;
 		}
@@ -369,7 +367,7 @@ namespace Floe.Net
 			this.From = message.From as IrcPeer;
 			this.To = message.Parameters.Count > 0 ? new IrcTarget(message.Parameters[0]) : null;
 			this.Command = message.Parameters.Count > 1 ? CtcpCommand.Parse(message.Parameters[1]) : null;
-			this.IsResponse = message.Command == "NOTICE";
+			this.IsResponse = message.Command == IrcCommand.NOTICE;
 		}
 	}
 }

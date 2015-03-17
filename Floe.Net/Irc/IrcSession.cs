@@ -351,7 +351,7 @@ namespace Floe.Net
 		/// </summary>
 		/// <param name="command">The name of the command.</param>
 		/// <param name="parameters">The optional command parameters.</param>
-		public void Send(string command, params string[] parameters)
+		public void Send(IrcCommand command, params string[] parameters)
 		{
 			if (this.State != IrcSessionState.Disconnected)
 			{
@@ -365,7 +365,7 @@ namespace Floe.Net
 		/// <param name="command">The name of the command.</param>
 		/// <param name="target">The target of the command.</param>
 		/// <param name="parameters">The optional command parameters.</param>
-		public void Send(string command, IrcTarget target, params string[] parameters)
+		public void Send(IrcCommand command, IrcTarget target, params string[] parameters)
 		{
 			this.Send(command, (new[] { target.ToString() }).Union(parameters).ToArray());
 		}
@@ -379,7 +379,7 @@ namespace Floe.Net
 		/// is important for preventing an infinite back-and-forth loop between two clients.</param>
 		public void SendCtcp(IrcTarget target, CtcpCommand command, bool isResponse)
 		{
-			this.Send(isResponse ? "NOTICE" : "PRIVMSG", target, command.ToString());
+			this.Send(isResponse ? IrcCommand.NOTICE : IrcCommand.PRIVMSG, target, command.ToString());
 		}
 
 		/// <summary>
@@ -388,7 +388,9 @@ namespace Floe.Net
 		/// <param name="rawText">The raw text to send. This should be in the format of a standard IRC message, per RFC 2812.</param>
 		public void Quote(string rawText)
 		{
-			this.Send(new IrcMessage(rawText));
+			throw new System.NotImplementedException();
+			// TODO: figure out what to do with this
+			//this.Send(new IrcMessage(rawText));
 		}
 
 		/// <summary>
@@ -399,7 +401,7 @@ namespace Floe.Net
 		{
 			if (this.State != IrcSessionState.Disconnected)
 			{
-				this.Send("NICK", newNickname);
+				this.Send(IrcCommand.NICK, newNickname);
 			}
 			if (this.State != IrcSessionState.Connected)
 			{
@@ -414,7 +416,7 @@ namespace Floe.Net
 		/// <param name="text">The message text.</param>
 		public void PrivateMessage(IrcTarget target, string text)
 		{
-			this.Send("PRIVMSG", target, text);
+			this.Send(IrcCommand.PRIVMSG, target, text);
 		}
 
 		/// <summary>
@@ -424,7 +426,7 @@ namespace Floe.Net
 		/// <param name="text">The notice text.</param>
 		public void Notice(IrcTarget target, string text)
 		{
-			this.Send("NOTICE", target, text);
+			this.Send(IrcCommand.NOTICE, target, text);
 		}
 
 		/// <summary>
@@ -436,7 +438,7 @@ namespace Floe.Net
 			this.AutoReconnect = false;
 			if (this.State != IrcSessionState.Disconnected)
 			{
-				this.Send("QUIT", text);
+				this.Send(IrcCommand.QUIT, text);
 				_conn.Close();
 			}
 		}
@@ -447,7 +449,7 @@ namespace Floe.Net
 		/// <param name="channel">The name of the channel to join.</param>
 		public void Join(string channel)
 		{
-			this.Send("JOIN", channel);
+			this.Send(IrcCommand.JOIN, channel);
 		}
 
 		/// <summary>
@@ -457,7 +459,7 @@ namespace Floe.Net
 		/// <param name="key">The key required to join the channel.</param>
 		public void Join(string channel, string key)
 		{
-			this.Send("JOIN", channel, key);
+			this.Send(IrcCommand.JOIN, channel, key);
 		}
 
 		/// <summary>
@@ -466,7 +468,7 @@ namespace Floe.Net
 		/// <param name="channel">The channel to leave.</param>
 		public void Part(string channel)
 		{
-			this.Send("PART", channel);
+			this.Send(IrcCommand.PART, channel);
 		}
 
 		/// <summary>
@@ -476,7 +478,7 @@ namespace Floe.Net
 		/// <param name="topic">The topic text.</param>
 		public void Topic(string channel, string topic)
 		{
-			this.Send("TOPIC", channel, topic);
+			this.Send(IrcCommand.TOPIC, channel, topic);
 		}
 
 		/// <summary>
@@ -485,7 +487,7 @@ namespace Floe.Net
 		/// <param name="channel">The channel on which the topic should be retrieved.</param>
 		public void Topic(string channel)
 		{
-			this.Send("TOPIC", channel);
+			this.Send(IrcCommand.TOPIC, channel);
 		}
 
 		/// <summary>
@@ -495,7 +497,7 @@ namespace Floe.Net
 		/// <param name="nickname">The nickname of the user to invite.</param>
 		public void Invite(string channel, string nickname)
 		{
-			this.Send("INVITE", nickname, channel);
+			this.Send(IrcCommand.INVITE, nickname, channel);
 		}
 
 		/// <summary>
@@ -505,7 +507,7 @@ namespace Floe.Net
 		/// <param name="nickname">The nickname of the user to kick.</param>
 		public void Kick(string channel, string nickname)
 		{
-			this.Send("KICK", channel, nickname);
+			this.Send(IrcCommand.KICK, channel, nickname);
 		}
 
 		/// <summary>
@@ -516,7 +518,7 @@ namespace Floe.Net
 		/// <param name="text">The kick text, typically describing the reason for kicking a user.</param>
 		public void Kick(string channel, string nickname, string text)
 		{
-			this.Send("KICK", channel, nickname, text);
+			this.Send(IrcCommand.KICK, channel, nickname, text);
 		}
 
 		/// <summary>
@@ -524,7 +526,7 @@ namespace Floe.Net
 		/// </summary>
 		public void Motd()
 		{
-			this.Send("MOTD");
+			this.Send(IrcCommand.MOTD);
 		}
 
 		/// <summary>
@@ -533,7 +535,7 @@ namespace Floe.Net
 		/// <param name="server">The name of the server from which to request the MOTD.</param>
 		public void Motd(string server)
 		{
-			this.Send("MOTD", server);
+			this.Send(IrcCommand.MOTD, server);
 		}
 
 		/// <summary>
@@ -542,7 +544,7 @@ namespace Floe.Net
 		/// <param name="mask">The wildcard to search for, matching nickname, hostname, server, and full name.</param>
 		public void Who(string mask)
 		{
-			this.Send("WHO", mask);
+			this.Send(IrcCommand.WHO, mask);
 		}
 
 		/// <summary>
@@ -551,7 +553,7 @@ namespace Floe.Net
 		/// <param name="target">The nickname of the user to retrieve information about. Wildcards may or may not be supported.</param>
 		public void WhoIs(string mask)
 		{
-			this.Send("WHOIS", mask);
+			this.Send(IrcCommand.WHOIS, mask);
 		}
 
 		/// <summary>
@@ -562,7 +564,7 @@ namespace Floe.Net
 		/// <param name="target">The nickname of the user to retrieve information about. Wildcards may or may not be supported.</param>
 		public void WhoIs(string target, string mask)
 		{
-			this.Send("WHOIS", target, mask);
+			this.Send(IrcCommand.WHOIS, target, mask);
 		}
 
 		/// <summary>
@@ -571,7 +573,7 @@ namespace Floe.Net
 		/// <param name="nickname">The nickname of the user.</param>
 		public void WhoWas(string nickname)
 		{
-			this.Send("WHOWAS", nickname);
+			this.Send(IrcCommand.WHOWAS, nickname);
 		}
 
 		/// <summary>
@@ -580,7 +582,7 @@ namespace Floe.Net
 		/// <param name="text">The text to send to users who query the session.</param>
 		public void Away(string text)
 		{
-			this.Send("AWAY", text);
+			this.Send(IrcCommand.AWAY, text);
 		}
 
 		/// <summary>
@@ -588,7 +590,7 @@ namespace Floe.Net
 		/// </summary>
 		public void UnAway()
 		{
-			this.Send("AWAY");
+			this.Send(IrcCommand.AWAY);
 		}
 
 		/// <summary>
@@ -597,7 +599,7 @@ namespace Floe.Net
 		/// <param name="nicknames">The nicknames for which to retrieve information.</param>
 		public void UserHost(params string[] nicknames)
 		{
-			this.Send("USERHOST", nicknames);
+			this.Send(IrcCommand.USERHOST, nicknames);
 		}
 
 		/// <summary>
@@ -609,7 +611,7 @@ namespace Floe.Net
 		{
 			if (!modes.Any())
 			{
-				this.Send("MODE", new IrcTarget(channel));
+				this.Send(IrcCommand.MODE, new IrcTarget(channel));
 				return;
 			}
 
@@ -621,14 +623,14 @@ namespace Floe.Net
 				modeChunk.Add(enumerator.Current);
 				if (++i == 3)
 				{
-					this.Send("MODE", new IrcTarget(channel), IrcChannelMode.RenderModes(modeChunk));
+					this.Send(IrcCommand.MODE, new IrcTarget(channel), IrcChannelMode.RenderModes(modeChunk));
 					modeChunk.Clear();
 					i = 0;
 				}
 			}
 			if (modeChunk.Count > 0)
 			{
-				this.Send("MODE", new IrcTarget(channel), IrcChannelMode.RenderModes(modeChunk));
+				this.Send(IrcCommand.MODE, new IrcTarget(channel), IrcChannelMode.RenderModes(modeChunk));
 			}
 		}
 
@@ -655,7 +657,7 @@ namespace Floe.Net
 		/// <param name="modes">The collection of modes to set or unset.</param>
 		public void Mode(IEnumerable<IrcUserMode> modes)
 		{
-			this.Send("MODE", new IrcTarget(this.Nickname), IrcUserMode.RenderModes(modes));
+			this.Send(IrcCommand.MODE, new IrcTarget(this.Nickname), IrcUserMode.RenderModes(modes));
 		}
 
 		/// <summary>
@@ -681,7 +683,7 @@ namespace Floe.Net
 		{
 			if (channel.IsChannel)
 			{
-				this.Send("MODE", channel);
+				this.Send(IrcCommand.MODE, channel);
 			}
 		}
 
@@ -692,7 +694,7 @@ namespace Floe.Net
 		/// <param name="target">The name of the server to query.</param>
 		public void List(string mask, string target)
 		{
-			this.Send("LIST", mask, target);
+			this.Send(IrcCommand.LIST, mask, target);
 		}
 
 		/// <summary>
@@ -701,7 +703,7 @@ namespace Floe.Net
 		/// <param name="mask">The channel name or names to list (supports wildcards).</param>
 		public void List(string mask)
 		{
-			this.Send("LIST", mask);
+			this.Send(IrcCommand.LIST, mask);
 		}
 
 		/// <summary>
@@ -709,7 +711,7 @@ namespace Floe.Net
 		/// </summary>
 		public void List()
 		{
-			this.Send("LIST");
+			this.Send(IrcCommand.LIST);
 		}
 
 		/// <summary>
@@ -845,54 +847,67 @@ namespace Floe.Net
 				return;
 			}
 
-			switch (e.Message.Command)
+			if (e.Message.Code != IrcCode.None)
 			{
-				case "PING":
-					if (e.Message.Parameters.Count > 0)
+				if (e.Message.Command != IrcCommand.NoCommand)
+					throw new System.ArgumentException("message must be command or reply");
+				this.OnCode(e.Message, e.Message.Code);
+			}
+			else
+			{
+				this.OnCommand(e.Message, e.Message.Command);
+			}
+		}
+
+		private void OnCommand(IrcMessage message, IrcCommand command)
+		{
+			switch (message.Command)
+			{
+				case IrcCommand.PING:
+					if (message.Parameters.Count > 0)
 					{
-						_conn.QueueMessage("PONG " + e.Message.Parameters[0]);
+						_conn.QueueMessage("PONG " + message.Parameters[0]);
 					}
 					else
 					{
 						_conn.QueueMessage("PONG");
 					}
 					break;
-				case "NICK":
-					this.OnNickChanged(e.Message);
+				case IrcCommand.NICK:
+					this.OnNickChanged(message);
 					break;
-				case "PRIVMSG":
-					this.OnPrivateMessage(e.Message);
+				case IrcCommand.PRIVMSG:
+					this.OnPrivateMessage(message);
 					break;
-				case "NOTICE":
-					this.OnNotice(e.Message);
+				case IrcCommand.NOTICE:
+					this.OnNotice(message);
 					break;
-				case "QUIT":
-					this.OnQuit(e.Message);
+				case IrcCommand.QUIT:
+					this.OnQuit(message);
 					break;
-				case "JOIN":
-					this.OnJoin(e.Message);
+				case IrcCommand.JOIN:
+					this.OnJoin(message);
 					break;
-				case "PART":
-					this.OnPart(e.Message);
+				case IrcCommand.PART:
+					this.OnPart(message);
 					break;
-				case "TOPIC":
-					this.OnTopic(e.Message);
+				case IrcCommand.TOPIC:
+					this.OnTopic(message);
 					break;
-				case "INVITE":
-					this.OnInvite(e.Message);
+				case IrcCommand.INVITE:
+					this.OnInvite(message);
 					break;
-				case "KICK":
-					this.OnKick(e.Message);
+				case IrcCommand.KICK:
+					this.OnKick(message);
 					break;
-				case "MODE":
-					this.OnMode(e.Message);
+				case IrcCommand.MODE:
+					this.OnMode(message);
 					break;
-                case "CAP":
-                    this.OnCap(e.Message);
-                    break;
+				case IrcCommand.CAP:
+					this.OnCap(message);
+					break;
 				default:
-					this.OnOther(e.Message);
-					break;
+					throw new ArgumentException("unsupported command: " + command.ToString());
 			}
 		}
 
@@ -1037,43 +1052,39 @@ namespace Floe.Net
             }
         }
 
-		private void OnOther(IrcMessage message)
+		private void OnCode(IrcMessage message, IrcCode code)
 		{
-			int code;
-			if (int.TryParse(message.Command, out code))
+			var e = new IrcInfoEventArgs(message);
+			if (e.Code == IrcCode.RPL_WELCOME)
 			{
-				var e = new IrcInfoEventArgs(message);
-				if (e.Code == IrcCode.RPL_WELCOME)
+				if (e.Text.StartsWith("Welcome to the ") && this.NetworkName == this.Server)
 				{
-					if (e.Text.StartsWith("Welcome to the ") && this.NetworkName == this.Server)
-					{
-						var parts = e.Text.Split(' ');
-						this.NetworkName = parts[3];
-					}
-					this.State = IrcSessionState.Connected;
+					var parts = e.Text.Split(' ');
+					this.NetworkName = parts[3];
 				}
+				this.State = IrcSessionState.Connected;
+			}
 
-				if (_captures.Count > 0)
+			if (_captures.Count > 0)
+			{
+				lock (_captures)
 				{
-					lock (_captures)
+					var capture = _captures.Where((c) => c.Codes.Contains(e.Code)).FirstOrDefault();
+					if (capture != null)
 					{
-						var capture = _captures.Where((c) => c.Codes.Contains(e.Code)).FirstOrDefault();
-						if (capture != null)
+						if (capture.Handler(e))
 						{
-							if (capture.Handler(e))
-							{
-								_captures.Remove(capture);
-							}
-							if (e.Handled)
-							{
-								return;
-							}
+							_captures.Remove(capture);
+						}
+						if (e.Handled)
+						{
+							return;
 						}
 					}
 				}
-
-				this.RaiseEvent(this.InfoReceived, e);
 			}
+
+			this.RaiseEvent(this.InfoReceived, e);
 		}
 
 		private void OnCtcpCommand(IrcMessage message)
@@ -1105,14 +1116,14 @@ namespace Floe.Net
             // IRCv3 Client Capability Negotiation
             //_conn.QueueMessage(new IrcMessage("CAP", "LS"));
             // NEGOTIATION? I MEANT A ONE-SIDED DEMAND.
-            _conn.QueueMessage(new IrcMessage("CAP", "REQ", "znc.in/server-time-iso"));
+            _conn.QueueMessage(new IrcMessage(IrcCommand.CAP, "REQ", "znc.in/server-time-iso"));
 
 			if (!string.IsNullOrEmpty(_password))
 			{
-				_conn.QueueMessage(new IrcMessage("PASS", _password));
+				_conn.QueueMessage(new IrcMessage(IrcCommand.PASS, _password));
 			}
-			_conn.QueueMessage(new IrcMessage("USER", this.Username, _isInvisible ? "4" : "0", "*", this.FullName));
-			_conn.QueueMessage(new IrcMessage("NICK", this.Nickname));
+			_conn.QueueMessage(new IrcMessage(IrcCommand.USER, this.Username, _isInvisible ? "4" : "0", "*", this.FullName));
+			_conn.QueueMessage(new IrcMessage(IrcCommand.NICK, this.Nickname));
 		}
 
 		private void _conn_Disconnected(object sender, EventArgs e)
@@ -1129,7 +1140,7 @@ namespace Floe.Net
 			else
 			{
 				_isWaitingForActivity = true;
-				this.Send("PING", this.Server);
+				this.Send(IrcCommand.PING, this.Server);
 			}
         }
 	}

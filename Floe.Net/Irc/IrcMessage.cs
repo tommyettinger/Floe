@@ -4,6 +4,32 @@ using System.Text;
 
 namespace Floe.Net
 {
+	public enum IrcCommand
+	{
+		PING,
+		NICK,
+		PRIVMSG,
+		NOTICE,
+		QUIT,
+		JOIN,
+		PART,
+		TOPIC,
+		INVITE,
+		KICK,
+		MODE,
+		CAP,
+		MOTD,
+		WHO,
+		WHOIS,
+		WHOWAS,
+		USERHOST,
+		LIST,
+		AWAY,
+		USER,
+		PASS,
+		NoCommand
+	}
+
 	/// <summary>
 	/// Represents a raw IRC message received from or sent to the IRC server, in accordance with RFC 2812.
 	/// </summary>
@@ -12,52 +38,62 @@ namespace Floe.Net
 		/// <summary>
 		/// Gets the prefix that indicates the source of the message.
 		/// </summary>
-		public IrcPrefix From { get; private set; }
+		public readonly IrcPrefix From;
 
 		/// <summary>
-		/// Gets the name of the command.
+		/// command class
 		/// </summary>
-		public string Command { get; private set; }
+		public readonly IrcCommand Command;
+
+		public readonly IrcCode Code;
 
 		/// <summary>
 		/// Gets the list of parameters.
 		/// </summary>
-		public IList<string> Parameters { get; private set; }
+		public readonly IList<string> Parameters;
 
         /// <summary>
         /// Gets the list of tags.
         /// </summary>
-        public IrcTags Tags { get; private set; }
+		public readonly IrcTags Tags;
 
-        public DateTime Received { get; private set; }
+		public readonly DateTime Received;
 
-        public DateTime Time
-        {
-            get
-            {
-                if (Tags.ContainsKey("time"))
-                {
-                    DateTime t;
-                    if (DateTime.TryParse(Tags["time"], System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.AssumeUniversal, out t))
-                        return t.ToLocalTime();
-                }
+		public readonly DateTime Time;
 
-                return Received;
-            }
-        }
-
-		internal IrcMessage(string command, params string[] parameters)
-			: this(new IrcTags(), null, command, parameters)
+		/// <summary>
+		/// Create an outgoing message.
+		/// </summary>
+		/// <param name="command"></param>
+		/// <param name="parameters"></param>
+		internal IrcMessage(IrcCommand command, params string[] parameters)
+			: this(new IrcTags(), null, command, IrcCode.None, parameters)
 		{
+			if (command == IrcCommand.NoCommand)
+				throw new ArgumentException("command required");
 		}
 
-		internal IrcMessage(IrcTags tags, IrcPrefix prefix, string command, params string[] parameters)
+		private IrcMessage(IrcTags tags, IrcPrefix prefix, IrcCommand command, IrcCode code,
+            string[] parameters)
 		{
             this.Tags = tags;
 			this.From = prefix;
             this.Command = command;
+            this.Code = code;
 			this.Parameters = parameters;
             this.Received = DateTime.Now;
+
+            DateTime t;
+            if (Tags.ContainsKey("time") && (DateTime.TryParse(Tags["time"], System.Globalization.CultureInfo.InvariantCulture,
+                System.Globalization.DateTimeStyles.AssumeUniversal, out t)))
+                this.Time = t;
+            else
+                this.Time = this.Received;
+		}
+
+		private IrcMessage(IrcCode code, IrcTags tags, IrcPrefix prefix, string[] parameters)
+			: this(tags, prefix, IrcCommand.NoCommand, code, parameters)
+		{
 		}
 
 		/// <summary>
@@ -86,77 +122,86 @@ namespace Floe.Net
 			return sb.ToString();
 		}
 
+		private static IrcCommand TokenizeCommand(string command)
+		{
+			switch (command)
+			{
+				case "PING":
+					return IrcCommand.PING;
+				case "NICK":
+					return IrcCommand.NICK;
+				case "PRIVMSG":
+					return IrcCommand.PRIVMSG;
+				case "NOTICE":
+					return IrcCommand.NOTICE;
+				case "QUIT":
+					return IrcCommand.QUIT;
+				case "JOIN":
+					return IrcCommand.JOIN;
+				case "PART":
+					return IrcCommand.PART;
+				case "TOPIC":
+					return IrcCommand.TOPIC;
+				case "INVITE":
+					return IrcCommand.INVITE;
+				case "KICK":
+					return IrcCommand.KICK;
+				case "MODE":
+					return IrcCommand.MODE;
+				case "CAP":
+					return IrcCommand.CAP;
+				default:
+					throw new System.ArgumentException("unknown IRC command: " + command);
+			}
+		}
+
 		internal static IrcMessage Parse(string data)
 		{
-			StringBuilder sb = new StringBuilder();
-			List<string> para = new List<string>();
-			//int size = data.Length > 512 ? 512 : data.Length;
-			//Char[] c = data.ToCharArray(0, size);
-            Char[] c = data.ToCharArray();
-			int pos = 0;
-            string tagstring = null;
-			string prefix = null;
-			string command = null;
+			string[] tokens = data.Split(' ');
+			IrcTags tags = null;
+			IrcPrefix prefix = null;
+			int tokenIndex = 0;
 
-            if (c[pos] == '@')
-            {
-                for (pos++; pos < c.Length; pos++)
-                {
-                    if (c[pos] == ' ')
-                        break;
-
-                    sb.Append(c[pos]);
-                }
-                tagstring = sb.ToString();
-                sb.Length = 0;
-                pos++;
-            }
-
-			if (c[pos] == ':')
+			if (tokens[0].StartsWith("@"))
 			{
-				for (pos++; pos < c.Length; pos++)
-				{
-					if (c[pos] == ' ')
-						break;
-
-					sb.Append(c[pos]);
-				}
-				prefix = sb.ToString();
-				sb.Length = 0;
-				pos++;
+				tags = IrcTags.Parse(tokens[0].Substring(1));
+				tokenIndex++;
 			}
 
-			for (; pos < c.Length; pos++)
+			if (tokens[tokenIndex].StartsWith(":"))
 			{
-				if (c[pos] == ' ')
-					break;
-				sb.Append(c[pos]);
-			}
-			command = sb.ToString();
-			sb.Length = 0;
-			pos++;
-
-			bool trailing = false;
-			while (pos < c.Length)
-			{
-				if (c[pos] == ':')
-				{
-					trailing = true;
-					pos++;
-				}
-
-				for (; pos < c.Length; pos++)
-				{
-					if (c[pos] == ' ' && !trailing)
-						break;
-					sb.Append(c[pos]);
-				}
-				para.Add(sb.ToString());
-				sb.Length = 0;
-				pos++;
+				prefix = IrcPrefix.Parse(tokens[tokenIndex].Substring(1));
+				tokenIndex++;
 			}
 
-			return new IrcMessage(IrcTags.Parse(tagstring), IrcPrefix.Parse(prefix), command, para.ToArray());
+			string commandString = tokens[tokenIndex];
+			tokenIndex++;
+
+			List<string> parameters = new List<string>(tokens.Length - tokenIndex);
+			StringBuilder param = new StringBuilder();
+			for (; tokenIndex < tokens.Length; tokenIndex++)
+			{
+				param.Append(tokens[tokenIndex]);
+
+				if (!tokens[tokenIndex].StartsWith(":"))
+				{
+					parameters.Add(param.ToString());
+					param.Clear();
+				}
+			}
+
+			// If there's an unterminated parameter, just add it to the end of the parameter list.
+			if (param.Length != 0)
+				parameters.Add(param.ToString());
+
+			IrcCode code;
+			if (IrcCode.TryParse(commandString, out code))
+				return new IrcMessage(code, tags, prefix, parameters.ToArray());
+			else
+			{
+				// tags and prefix are dropped
+				return new IrcMessage(TokenizeCommand(commandString), parameters.ToArray());
+			}
 		}
 	}
 }

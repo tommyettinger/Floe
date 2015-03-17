@@ -105,7 +105,7 @@ namespace Floe.UI
 
 		private void session_RawMessageReceived(object sender, IrcEventArgs e)
 		{
-			if (e.Message.Command == "PRIVMSG" && e.Message.Parameters.Count == 2
+			if (e.Message.Command == IrcCommand.PRIVMSG && e.Message.Parameters.Count == 2
 				&& (!CtcpCommand.IsCtcpCommand(e.Message.Parameters[1]) ||
 				CtcpCommand.Parse(e.Message.Parameters[1]).Command == "ACTION"))
 			{
