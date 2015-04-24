@@ -313,7 +313,10 @@
     <Resource Include="Resources\GreenBubble.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\MagentaBubble.ico" />
+    <Resource Include="Resources\TealBubble.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\RedBubble.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

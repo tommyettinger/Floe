@@ -29,9 +29,15 @@
         <TaskbarItemInfo />
     </Window.TaskbarItemInfo>
     <Window.Resources>
-        <DrawingImage x:Key="MagentaBubble">
+        <DrawingImage x:Key="RedBubble">
             <DrawingImage.Drawing>
-                <ImageDrawing ImageSource="..\Resources\MagentaBubble.ico"
+                <ImageDrawing ImageSource="..\Resources\RedBubble.ico"
+                          Rect="0,0,16,16" />
+            </DrawingImage.Drawing>
+        </DrawingImage>
+        <DrawingImage x:Key="TealBubble">
+            <DrawingImage.Drawing>
+                <ImageDrawing ImageSource="..\Resources\TealBubble.ico"
                           Rect="0,0,16,16" />
             </DrawingImage.Drawing>
         </DrawingImage>

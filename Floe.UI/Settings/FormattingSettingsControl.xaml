@@ -65,10 +65,10 @@
         <CheckBox ToolTip="{StaticResource ttAutoSizeColumn}" Canvas.Left="37" Canvas.Top="176" IsEnabled="{Binding ElementName=chkUseTabularView, Path=IsChecked}" IsChecked="{Binding Source={x:Static local:App.Settings}, Path=Current.Formatting.AutoSizeColumn}" Content="Auto Size Column" Height="16" Name="checkBox2" />
         <CheckBox ToolTip="{StaticResource ttAttentionOnOwnNick}" Canvas.Left="18" Canvas.Top="207" Content="Attention On Own Nickname" Height="16" Name="checkBox1"
 				  IsChecked="{Binding Source={x:Static local:App.Settings}, Path=Current.Formatting.AttentionOnOwnNickname}"/>
-        <CheckBox Canvas.Left="18" Canvas.Top="228" Content="Overlay Icon On Own Nickname" Height="16" x:Name="checkBox3"
-			IsChecked="{Binding Current.Formatting.OverlayIconOnOwnNickname, Source={x:Static local:App.Settings}}" RenderTransformOrigin="0.529,4.375"/>
-        <CheckBox Canvas.Left="18" Canvas.Top="249" Content="Overlay Icon On Chat Activity" Height="16" x:Name="checkBox4"
+        <CheckBox Canvas.Left="18" Canvas.Top="228" Content="Overlay Icon On Chat Activity" Height="16" x:Name="checkBox3"
         	IsChecked="{Binding Current.Formatting.OverlayIconOnChatActivity, Source={x:Static local:App.Settings}}" RenderTransformOrigin="0.529,4.375"/>
+        <CheckBox Canvas.Left="37" Canvas.Top="249" Content="Use different colors" Height="16" x:Name="checkBox4" IsEnabled="{Binding ElementName=checkBox3, Path=IsChecked}"
+			IsChecked="{Binding Current.Formatting.OverlayIconChangeColor, Source={x:Static local:App.Settings}}" RenderTransformOrigin="0.529,4.375"/>
         <TextBox ToolTip="{StaticResource ttAttentionRegex}" Canvas.Left="202" Canvas.Top="149" Height="139" Name="textBox1" Width="170" AcceptsReturn="True"
 				 Text="{Binding Source={x:Static local:App.Settings}, Path=Current.Formatting.AttentionPatterns}" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" />
         <Label ToolTip="{StaticResource ttAttentionRegex}" Canvas.Left="202" Canvas.Top="127" Content="Attention RegEx Patterns" Height="28" Name="label2" />

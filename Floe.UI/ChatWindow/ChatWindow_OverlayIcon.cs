@@ -8,7 +8,8 @@ namespace Floe.UI
     {
         None,
         ChatActivity,
-        OwnNickname
+        OwnNickname,
+        PrivateMessage
     }
 
     public partial class ChatWindow : Window
@@ -27,26 +28,33 @@ namespace Floe.UI
 
         public void setOverlayIcon(OverlayIconState newState)
         {
-            if (newState == OverlayIconState.ChatActivity && this.state == OverlayIconState.None)
-            {
-                state = OverlayIconState.ChatActivity;
-                if (App.Settings.Current.Formatting.OverlayIconOnOwnNickname)
-                {
-                    TaskbarItemInfo.Overlay = (ImageSource)Resources["GreenBubble"];
-                }
-            }
-            else if (newState == OverlayIconState.OwnNickname && this.state != OverlayIconState.OwnNickname)
-            {
-                state = OverlayIconState.OwnNickname;
-                if (App.Settings.Current.Formatting.OverlayIconOnChatActivity)
-                {
-                    TaskbarItemInfo.Overlay = (ImageSource)Resources["MagentaBubble"];
-                }
-            }
-            else if (newState == OverlayIconState.None && this.state != OverlayIconState.None)
+            if (newState == OverlayIconState.None && this.state != OverlayIconState.None)
             {
                 state = OverlayIconState.None;
                 TaskbarItemInfo.Overlay = null;
+                return;
+            }
+
+            if (App.Settings.Current.Formatting.OverlayIconOnChatActivity && (newState > state))
+            {
+                if (!App.Settings.Current.Formatting.OverlayIconChangeColor || (newState == OverlayIconState.ChatActivity))
+                {
+                    state = newState;
+                    TaskbarItemInfo.Overlay = (ImageSource)Resources["GreenBubble"];
+                }
+                else if (App.Settings.Current.Formatting.OverlayIconChangeColor)
+                {
+                    if (newState == OverlayIconState.OwnNickname)
+                    {
+                        state = OverlayIconState.OwnNickname;
+                        TaskbarItemInfo.Overlay = (ImageSource)Resources["TealBubble"];
+                    }
+                    else if (newState == OverlayIconState.PrivateMessage)
+                    {
+                        state = OverlayIconState.PrivateMessage;
+                        TaskbarItemInfo.Overlay = (ImageSource)Resources["RedBubble"];
+                    }
+                }
             }
         }
     }
