@@ -1102,17 +1102,17 @@ namespace Floe.Net
 				Dns.GetHostEntry(string.Empty).AddressList
 				.Where((ip) => ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork).FirstOrDefault();
 
-            // IRCv3 Client Capability Negotiation
-            //_conn.QueueMessage(new IrcMessage("CAP", "LS"));
-            // NEGOTIATION? I MEANT A ONE-SIDED DEMAND.
-            _conn.QueueMessage(new IrcMessage("CAP", "REQ", "znc.in/server-time-iso"));
-
 			if (!string.IsNullOrEmpty(_password))
 			{
 				_conn.QueueMessage(new IrcMessage("PASS", _password));
 			}
 			_conn.QueueMessage(new IrcMessage("USER", this.Username, _isInvisible ? "4" : "0", "*", this.FullName));
 			_conn.QueueMessage(new IrcMessage("NICK", this.Nickname));
+
+            // IRCv3 Client Capability Negotiation
+            //_conn.QueueMessage(new IrcMessage("CAP", "LS"));
+            // NEGOTIATION? I MEANT A ONE-SIDED DEMAND.
+            _conn.QueueMessage(new IrcMessage("CAP", "REQ", "znc.in/server-time-iso"));
 		}
 
 		private void _conn_Disconnected(object sender, EventArgs e)
