@@ -28,8 +28,9 @@ namespace Floe.Configuration
 				return (ServerElement)this.BaseGet((index));
 			}
 			set
-			{
-				if (BaseGet(index) != null)
+            {
+                if (value == null) return;
+                if (BaseGet(index) != null)
 				{
 					this.BaseRemoveAt(index);
 				}
